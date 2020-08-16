@@ -1,0 +1,98 @@
+
+def render(url):
+    """Fully render HTML, JavaScript and all."""
+
+    import sys
+    from PyQt5.QtCore import QEventLoop,QUrl
+    from PyQt5.QtWidgets import QApplication
+    from PyQt5.QtWebEngineWidgets import QWebEngineView
+
+    class Render(QWebEngineView):
+        def __init__(self, url):
+            self.html = None
+            self.app = QApplication(sys.argv)
+            QWebEngineView.__init__(self)
+            self.loadFinished.connect(self._loadFinished)
+            self.load(QUrl(url))
+            while self.html is None:
+                self.app.processEvents(QEventLoop.ExcludeUserInputEvents | QEventLoop.ExcludeSocketNotifiers | QEventLoop.WaitForMoreEvents)
+            self.app.quit()
+
+        def _callable(self, data):
+            self.html = data
+
+        def _loadFinished(self, result):
+            self.page().toHtml(self._callable)
+
+    return Render(url).html
+    
+import requests
+sample_html = requests.get('https://www.ch-aviation.com/portal/airline/JP').text
+print(render('https://www.ch-aviation.com/portal/airline/JP'))
+
+
+
+
+
+
+
+
+
+
+'''
+
+payload = {  "username": 'SkycopSkycop',  "password": 'gqyzpg3MeM6hA8C' }
+
+s = requests.session()
+
+log_in_web = s.post('https://www.ch-aviation.com/login?od=http%3A%2F%2Fwww.ch-aviation.com%2Fportal%2Fairlines%2Fsearch%3Fsearch%3D1%26geo%3Dbase%26page%3D0', payload)
+
+
+
+#I will put for loop here when script is done
+
+my_url = 'https://www.ch-aviation.com/portal/airlines/search?search=1&geo=base&page=0'
+
+r2 = s.get(my_url)
+
+
+
+page_soup = soup(r2.text, "html.parser")
+
+t_rows = page_soup.findAll("tr")
+
+
+
+links = []
+
+for i in range(len(t_rows)):
+	if i == 0:
+		i += 1
+	rw = t_rows[i]
+	link_grab = rw.a["href"]
+	links.append(link_grab)
+
+
+link_test = links[2]
+print(link_test)
+
+client_response = Client(link_test)
+source = client_response.QWebEnginePage()
+
+
+
+
+
+r3 = s.get(links[0])
+
+
+
+
+info_soup = soup(r3.text, "html.parser")
+
+print(info_soup)
+
+
+
+
+'''

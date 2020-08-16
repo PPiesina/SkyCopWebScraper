@@ -1,0 +1,66 @@
+from selenium import webdriver
+import bs4
+from urllib.request import urlopen as uReq
+from bs4 import BeautifulSoup as soup
+from lxml import html
+import urllib.parse
+import requests
+
+import selenium as se
+
+
+login_url = 'https://www.ch-aviation.com/login?od=http%3A%2F%2Fwww.ch-aviation.com%2Fportal%2Fairlines%2Fsearch%3Fsearch%3D1%26geo%3Dbase%26page%3D0'
+myurl = 'https://www.ch-aviation.com/portal/airline/Q5#al_profile_tab_info'
+
+#payload = {  "username": 'SkycopSkycop',  "password": 'gqyzpg3MeM6hA8C' }
+
+
+
+username = 'SkycopSkycop'
+password = 'gqyzpg3MeM6hA8C'
+
+
+
+
+def make_session(driver):  
+    s = requests.Session()
+    cookies = driver.get_cookies()
+    for cookie in cookies:
+    	s.cookies.set(cookie['name'], cookie['value'])
+    return s
+def login():
+    options = se.webdriver.ChromeOptions()
+    options.add_argument('headless')
+    driver = se.webdriver.Chrome(options=options)
+
+
+    driver.get(login_url)
+    driver.find_element_by_id('username').send_keys(username)
+    driver.find_element_by_id('password').send_keys(password)
+    driver.find_element_by_xpath("//input[@type='submit' and @value='Log in']").click() 
+      
+       
+    req = make_session(driver)
+    
+
+    driver.get(myurl)
+    
+
+
+    foo = driver.page_source
+
+    page_soup = soup(foo, "html.parser")
+
+    #print(page_soup)
+    
+    info_space = page_soup.findAll('div')
+
+
+    print(info_space.a)
+
+
+
+    
+       
+
+login()
